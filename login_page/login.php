@@ -12,12 +12,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate email and password
     if (empty($email) || empty($password)) {
         $errors[] = "Email and password are required!";
-    } 
-     else {
-         // Validate email format
-      if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format!";
-    }
+    } else {
+        // Validate email format
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Invalid email format!";
+        }
+
         // Prepare and execute the query to select email and password from users table
         $sql = "SELECT * FROM users WHERE email = ? AND password_hash = ?";
         $stmt = $conn->prepare($sql);
@@ -29,41 +29,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
 
-            if($row['role'] == 'admin'){
-              $_SESSION['email'] = $row['email'];
-              header('location:admin.php');
-              exit();
-           } elseif($row['role'] == 'user'){
-              $_SESSION['email'] = $row['email'];
-              header('location:user.php');
-              exit();
-           } 
-       
-      }
-       
-        
-      else{
-        $errors[] = "error password or User does not exist";
-        // exit();
+            // Add user information to session variables
+            $_SESSION["user_id"] = $row["user_id"];
+            $_SESSION["username"] = $row["name"];
+            $_SESSION["image"] = $row["image"];
+            $_SESSION["role"] = $row["role"];
 
-    }
-      //   else{
-      //     $errors[] = "error passsssss";
-      //     // exit();
-
-      // }
-        
-     
+            // Redirect based on the user's role
+            if ($_SESSION["role"] == "admin") {
+                header("Location: admin.php"); // Assuming the correct path to the admin page
+            } else {
+                header("Location: ../user/userhome.php"); // Assuming the correct path to the user home page
+            }
+            exit();
+        } else {
+            $errors[] = "Error: Incorrect password or user does not exist";
+        }
 
         $stmt->close();
-
     }
-    
 
     $conn->close();
 }
 
-// If there are validation errors or if the form is not submitted, redirect to login page
+// If there are validation errors or if the form is not submitted, redirect to the login page
 if (!empty($errors)) {
     $_SESSION['errors'] = $errors;
     header("Location: login.php");
