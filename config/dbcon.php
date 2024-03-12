@@ -4,7 +4,7 @@ class db{
     private $dbname = "cafeteria_project";
     private $username = "root";
     private $password = ""; 
-    private $connection = "";
+    private $connection = null;
 
 function __construct() {
             $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname);
@@ -77,6 +77,11 @@ function getOrdersByDateRange($dateFrom, $dateTo) {
     $stmt->execute();
     $result = $stmt->get_result();
     return $result;
+}
+
+
+function getLastInsertedId() {
+    return $this->connection->insert_id;
 }
 
 }

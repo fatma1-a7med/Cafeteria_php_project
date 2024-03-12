@@ -5,12 +5,13 @@ require_once('../config/dbcon.php');
 $database = new db(); 
 if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"]) || $_SESSION["role"] !== "user") {
 
-    header("Location: login.php");
+    header("Location: ../login_page/login.php");
     exit();
 }
+//var_dump($_SESSION);
 $user_id = $_SESSION["user_id"];
 $username = $_SESSION["username"];
-$profile_pic = $_SESSION["profile_pic"]; 
+$image = $_SESSION["image"]; 
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +19,7 @@ $profile_pic = $_SESSION["profile_pic"];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cafetria</title>
-    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="../assests/css/home.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
@@ -40,7 +41,7 @@ $profile_pic = $_SESSION["profile_pic"];
                     </li>
                 </ul>
                 <div class="user-info">
-            <img src="<?php echo $profile_pic; ?>" alt="Profile Picture">
+            <img src="<?php echo $image; ?>" alt="Profile Picture">
             <?php echo $username; ?>
         </div>
             </div>
@@ -59,7 +60,7 @@ $profile_pic = $_SESSION["profile_pic"];
     <div class="container">
         <div class="row">
            <div class="col-md-5">
-                <form action="processOrder.php" method="POST">
+                <form action="../includes/home_products/processOrderUser.php" method="POST">
                     <div class="orders-panel">
                         <!-- choosen-items -->
                         <div class="choosen-items">
@@ -113,13 +114,13 @@ $profile_pic = $_SESSION["profile_pic"];
                   <div class="latest-orders">
                      <h1>lasted order</h1>
                      <div class="row">
-                     <?php include  'latestProduct.php'?>
+                     <?php include  '../includes/home_products/latestProduct.php'?>
                        </div>
                  </div>
                  <div class="products" id="products">
                       <h1>Main menu</h1>
                       <div class="row">
-                      <?php include  'allproducts.php'?>
+                      <?php include  '../includes/home_products/allproducts.php'?>
                      </div>
                  </div>
              </div>
@@ -129,6 +130,6 @@ $profile_pic = $_SESSION["profile_pic"];
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
-    <script src="user.js"></script>
+    <script src="../assests/js/home.js"></script>
 </body>
 </html>
