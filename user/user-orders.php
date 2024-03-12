@@ -1,14 +1,11 @@
 <?php 
-require("../db.php");
+require("../config/dbcon.php");
 $db = new DB();
-$connection = $db->get_connection();
+$connection = $db->getconnection();
 if ($connection->connect_error){
 	die("Failed to connect: " . $connection->connect_error);
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html>
   <head>
@@ -60,14 +57,12 @@ if ($connection->connect_error){
 			  <li class="nav-item">
 				<a class="nav-link" href="#">My Orders</a>
 			  </li>
-			
-			
 			</ul>
 			<div class="d-flex align-items-center">
-<!-- <img "src='./imgs/{$data['image']}'"  width="50" height="50" >-->	
+           <!-- <img "src='./imgs/{$data['image']}'"  width="50" height="50" >-->	
 		    <?php
        		     try {
-              		  $result = $db->get_data("users");
+              		  $result = $db->getdata("*","users",1);
 						//var_dump($result->fetch_array(MYSQLI_ASSOC));
             		    while ($data = $result->fetch_array(MYSQLI_ASSOC)) {
                   
@@ -76,7 +71,12 @@ if ($connection->connect_error){
                 }
             } catch (Exception $e) {
                 echo "Error: " . $e->getMessage();
-            }
+            } 
+            /* 
+			echo "<img class='img-fluid w-30' src='../admin/assests/images/$profile_pic' alt='$username' width='50' height='50'/>";
+			echo "<p class='mt-3 mx-2'>$username</p>"; */
+			 
+
             ?>
 			 
 			</div>
@@ -89,22 +89,23 @@ if ($connection->connect_error){
         <div class="container">
           <h1>My Orders</h1>
           <!-- date-picker -->
-          <form action="" class="mt-5">
+          <form action="" method="post" class="mt-5">
             <div class="row">
               <div class="col-sm-6">
                 <div class="from-group">
                   <label for="start">Date from:</label>
-                  <input type="date" class="form-control start" name="start" />
+                  <input type="date" class="form-control start" name="start" pattern="\d{4}-\d{2}-\d{2}" placeholder="YYYY-MM-DD" />
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="form-group">
                   <label for="end">Date to:</label>
-                  <input type="date" class="form-control end" name="end" />
+                  <input type="date" class="form-control end" name="end" pattern="\d{4}-\d{2}-\d{2}" placeholder="YYYY-MM-DD"/>
                 </div>
               </div>
             </div>
-          </form>
+			<input type="submit" class="btn btn-primary" value="Filter"/>
+          </form> 
           
         </div>
       </section>
@@ -129,30 +130,52 @@ if ($connection->connect_error){
                 
 				<?php
        		     try {
-              		  $result = $db->get_data("orders");
-						//var_dump($result->fetch_array(MYSQLI_ASSOC));
+					       // Check if start and end dates are provided
+    if( !empty($_POST['start']) && !empty($_POST['end'])) {
+        $dateFrom = $_POST['start'];
+        $dateTo = $_POST['end'];
+        
+        // Call the function to get orders within the specified date range
+        $result = $db->getOrdersByDateRange($dateFrom, $dateTo);
+		while ($data = $result->fetch_array(MYSQLI_ASSOC)) {
+			echo "<tr class='order'>";
+			echo "<td>"; 
+			echo "<span>{$data['order_date']}</span>";
+			echo "<button class='toggle-details btn btn-link'><i class='fas fa-plus-square'></i></button>";
+			echo "</td>";
+			echo "<td>{$data['order_status']}</td>";
+			echo "<td><span>{$data['total_price']}</span> EGP</td>";
+			/* echo "<td>1020</td>"; */
+			if($data['order_status']=="Processing"){
+				echo "<td><button class='cancel btn btn-danger'>Cancel</button></td>";
+			}	
+			echo " </tr>";	
+	}
+	//echo "<h1>".$result."</h1>";
+    }  else {
+    // If start and end dates are not provided, fetch all orders
+    $result = $db->getdata("*", "orders", "");
+	//var_dump($result->fetch_array(MYSQLI_ASSOC));
 
-						
-            		    while ($data = $result->fetch_array(MYSQLI_ASSOC)) {
-							echo "<tr class='order'>";
-							echo "<td>"; 
-                            echo "<span>{$data['order_date']}</span>";
-							echo "<button class='toggle-details btn btn-link'><i class='fas fa-plus-square'></i></button>";
-							echo "</td>";
-							echo "<td>{$data['order_status']}</td>";
-							echo "<td><span>{$data['total_price']}</span> EGP</td>";
-							/* echo "<td>1020</td>"; */
-							if($data['order_status']=="Processing"){
-								echo "<td><button class='cancel btn btn-danger'>Cancel</button></td>";
-							}	
-							echo " </tr>";		
-                }
-				$item = $db->get_data("products");
-				//echo var_dump($item->fetch_array(MYSQLI_ASSOC));
+	while ($data = $result->fetch_array(MYSQLI_ASSOC)) {
+		echo "<tr class='order'>";
+		echo "<td>"; 
+		echo "<span>{$data['order_date']}</span>";
+		echo "<button class='toggle-details btn btn-link'><i class='fas fa-plus-square'></i></button>";
+		echo "</td>";
+		echo "<td>{$data['order_status']}</td>";
+		echo "<td><span>{$data['total_price']}</span> EGP</td>";
+		/* echo "<td>1020</td>"; */
+		if($data['order_status']=="Processing"){
+			echo "<td><button class='cancel btn btn-danger'>Cancel</button></td>";
+		}	
+		echo " </tr>";	
+}
+$item = $db->getdata("*","products",1);
+				//echo var_dump($item->fetch_array(MYSQLI_ASSOC));					
 				while ($data_item = $item->fetch_array(MYSQLI_ASSOC)) {
-
-				echo '<tr class="order-details" style="display: none;">';
-					
+					echo '<tr class="order-details" style="display: none;">';
+				
                 echo ' <td colspan="4">';
 				echo '  <div class="row">';
 			      // each-item
@@ -172,6 +195,10 @@ if ($connection->connect_error){
 				   echo '</td>';
 				   echo '</tr>';
 				}
+}
+              		  
+					
+				
 				
                } catch (Exception $e) {
                 echo "Error: " . $e->getMessage();

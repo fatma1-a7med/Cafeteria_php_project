@@ -4,7 +4,7 @@ class db{
     private $dbname = "cafeteria_project";
     private $username = "root";
     private $password = ""; 
-    private $connection = null;
+    private $connection = "";
 
 function __construct() {
             $this->connection = new mysqli($this->host, $this->username, $this->password, $this->dbname);
@@ -68,6 +68,15 @@ function getbyid($tableName , $id){
         echo "Error: " . $this->connection->error;
         return null;
     }
+}
+
+function getOrdersByDateRange($dateFrom, $dateTo) {
+    $sql = "SELECT * FROM orders WHERE order_date BETWEEN ? AND ?";
+    $stmt = $this->connection->prepare($sql);
+    $stmt->bind_param("ss", $dateFrom, $dateTo);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result;
 }
 
 }
