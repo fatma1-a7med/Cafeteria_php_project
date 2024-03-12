@@ -6,13 +6,12 @@ $db = new db();
 <div class="container">
     <div class="row">
         <?php
-        $result = $db->getdata("*", "products", ""); // Fetch data from products table
+        $result = $db->getdata("*", "products", "");
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 ?>
                 <div class="col-md-3">
                     <div class="card each-order position-relative" data-product-id="<?php echo $row['id']; ?>">
-                        <!-- Assuming 'id' is the product ID column in your 'products' table -->
                         <img src='../assests/images/<?php echo $row['image']; ?>' class="card-img-top" alt="Product Image" style="height: 130px; width:100%">
                         <div class="card-body">
                             <div class="price-circle">

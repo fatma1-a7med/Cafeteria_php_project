@@ -1,17 +1,17 @@
 <?php
 session_start(); 
-// Check if the user is logged in
 require_once('../config/dbcon.php');
 $database = new db(); 
-if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"]) || $_SESSION["role"] !== "user") {
+
+if (!isset($_SESSION["user_id"]) || !isset($_SESSION["role"]) || $_SESSION["role"] !== "admin") {
 
     header("Location: ../login_page/login.php");
     exit();
 }
-//var_dump($_SESSION);
 $user_id = $_SESSION["user_id"];
 $username = $_SESSION["username"];
-$image = $_SESSION["image"]; 
+$image = $_SESSION["image"];
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,8 +60,24 @@ $image = $_SESSION["image"];
     <div class="container">
         <div class="row">
            <div class="col-md-5">
-                <form action="../includes/home_products/processOrderUser.php" method="POST">
+           <form action="../includes/home_products/processOrderAdmin.php" method="POST">
                     <div class="orders-panel">
+                        <div class="user-selection">
+                           <label>Select User:</label>
+                           <select name="selected_user_id" class="form-control my-3">
+                            <?php
+                              $users_query = "SELECT user_id, name FROM users WHERE role = 'user'";
+                              $users_result = $database->getdata("user_id, name", "users", "role='user'");
+                              if ($users_result) {
+                                  while ($row = $users_result->fetch_assoc()) {
+                                      echo "<option value='" . $row['user_id'] . "'>" . $row['name'] . "</option>";
+                                    }
+                                } else {
+                                   echo "<option value=''>No users found</option>";
+                                }
+                            ?>
+                            </select>
+                        </div>
                         <!-- choosen-items -->
                         <div class="choosen-items">
                             <ul class="list-unstyled">
@@ -111,12 +127,6 @@ $image = $_SESSION["image"];
           </div>
           <div class="col-md-7">
                <div class="allProducts ">
-                  <div class="latest-orders">
-                     <h1>lasted order</h1>
-                     <div class="row">
-                     <?php include  '../includes/home_products/latestProduct.php'?>
-                       </div>
-                 </div>
                  <div class="products" id="products">
                       <h1>Main menu</h1>
                       <div class="row">

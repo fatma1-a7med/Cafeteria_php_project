@@ -38,12 +38,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION["username"] = $row["name"];
             $_SESSION["image"] = $row["image"];
             $_SESSION["role"] = $row["role"];
-
+            $_SESSION["email"] = $row["email"];
             // Redirect based on the user's role
             if ($_SESSION["role"] == "admin") {
-                header("Location: admin.php"); // Assuming the correct path to the admin page
+                header("Location: ../admin/adminhome.php"); 
             } else {
-                header("Location: ../user/userhome.php"); // Assuming the correct path to the user home page
+                header("Location: ../user/userhome.php"); 
             }
             exit();
         } else {
@@ -55,7 +55,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $connection->close();
 }
-
 // If there are validation errors or if the form is not submitted, redirect to the login page
 if (!empty($errors)) {
     $_SESSION['errors'] = $errors;
@@ -63,9 +62,6 @@ if (!empty($errors)) {
     exit();
 }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

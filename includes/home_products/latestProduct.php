@@ -4,7 +4,7 @@ $database = new db();
 
 $user_id = $_SESSION["user_id"];
 
-// Query to retrieve the latest order items for the user with product name and image
+// Query to retrieve the latest order items for the user 
 $latestOrderItemsQuery = "SELECT p.name AS product_name, p.image AS product_image
                           FROM order_items oi
                           JOIN products p ON oi.product_id = p.id
@@ -19,7 +19,7 @@ if ($stmtLatestOrderItems) {
     $stmtLatestOrderItems->execute();
     $resultLatestOrderItems = $stmtLatestOrderItems->get_result();
 
-    // Display the latest order items with product name and image
+    // Display the latest order items 
     while ($row = $resultLatestOrderItems->fetch_assoc()) {
         echo '<div class="col-md-4">
                 <div class="card mb-4">
