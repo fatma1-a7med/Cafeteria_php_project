@@ -1,7 +1,8 @@
 <?php
 session_start();
-require_once('../config/dbcon.php');
+require_once('../../config/dbcon.php');
 $database = new db();
+
 
 $user_id = $_SESSION["user_id"];
 if (isset($_POST['submit'])) {

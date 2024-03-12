@@ -1,7 +1,11 @@
 <?php
 session_start();
-include 'db_connection.php'; 
+include ('../config/dbcon.php'); 
 $errors = []; // Define an array to hold validation errors
+
+// Create an instance of the db class
+$db = new db();
+$connection = $db->getconnection();
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -20,7 +24,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Prepare and execute the query to select email and password from users table
         $sql = "SELECT * FROM users WHERE email = ? AND password_hash = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $connection->prepare($sql);
         $stmt->bind_param("ss", $email, $password);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -49,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     }
 
-    $conn->close();
+    $connection->close();
 }
 
 // If there are validation errors or if the form is not submitted, redirect to the login page
@@ -59,6 +63,7 @@ if (!empty($errors)) {
     exit();
 }
 ?>
+
 
 
 <!DOCTYPE html>
